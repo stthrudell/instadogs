@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-import api from '../../api/api'
+import { getToken, getUser } from '../../api/api'
 import Input from '../Forms/Input'
 import Button from '../Forms/Button'
 import useForm from '../../Hooks/useForm'
@@ -11,16 +11,31 @@ const LoginForm = () => {
     const username = useForm()
     const password = useForm()
 
+    React.useEffect(() => {
+        const token = window.localStorage.getItem('token')
+        if(token)
+            getUser(token)
+    }, [])
+
     async function handleSubmit(event) {
         event.preventDefault()
         if(username.validate() && password.validate) {
-            api.post('jwt-auth/v1/token', JSON.stringify({
-                username,
-                password
-            }))
-            .then(res => res.json())
-            .then(data => console.log(data))
-            .catch(error => console.log(error.response))
+            const response = await getToken({
+                username: username.value,
+                password: password.value,
+            })
+
+            if(response.error) {
+                console.log(response.message);
+                return;
+            }
+
+            window.localStorage.setItem('token', response.token);
+
+            console.log(response)
+
+            const user = await getUser(response.token)
+            console.log(user)
         }
     } 
     return (

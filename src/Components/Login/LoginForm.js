@@ -32,10 +32,7 @@ const LoginForm = () => {
 
             window.localStorage.setItem('token', response.token);
 
-            console.log(response)
-
             const user = await getUser(response.token)
-            console.log(user)
         }
     } 
     return (

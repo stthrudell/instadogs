@@ -13,12 +13,11 @@ export async function getToken(body) {
 }
 
 export async function getUser(token) {
-    api.defaults.headers.get['Autorization'] = `Bearer ${token}`
+    api.defaults.headers.get['Authorization'] = `Bearer ${token}`
     const response = await api.get('api/user')
     .then(res =>res.data)
-    .catch(error => console.log(error))
+    .catch(error => ({error: error.response.data.code, message: error.response.data.message}))
     return response;
-
 }
 
 export default api;

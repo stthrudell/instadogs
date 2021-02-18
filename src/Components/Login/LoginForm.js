@@ -1,12 +1,16 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-import { getToken, getUser } from '../../api/api'
 import Input from '../Forms/Input'
 import Button from '../Forms/Button'
+
 import useForm from '../../Hooks/useForm'
 
+import { UserContext } from '../../contexts/UserContext'
+
 const LoginForm = () => {
+
+    const { userLogin, getUser } = React.useContext(UserContext)
 
     const username = useForm()
     const password = useForm()
@@ -20,19 +24,10 @@ const LoginForm = () => {
     async function handleSubmit(event) {
         event.preventDefault()
         if(username.validate() && password.validate) {
-            const response = await getToken({
+            await userLogin({
                 username: username.value,
                 password: password.value,
             })
-
-            if(response.error) {
-                console.log(response.message);
-                return;
-            }
-
-            window.localStorage.setItem('token', response.token);
-
-            const user = await getUser(response.token)
         }
     } 
     return (

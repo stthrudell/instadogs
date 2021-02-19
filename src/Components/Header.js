@@ -11,8 +11,6 @@ const Header = () => {
     
     const { data, userLogout } = React.useContext(UserContext)
 
-    console.log(data)
-
     return (
         <header className={styles.header}>
         <nav className={`${styles.nav} container`}>

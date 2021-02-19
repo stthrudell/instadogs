@@ -1,6 +1,6 @@
 import React from 'react'
 
-import api from '../../api/api'
+import { USER_POST } from '../../api/api'
 
 import Input from '../Forms/Input'
 import Button from '../Forms/Button'
@@ -9,6 +9,7 @@ import Error from '../Helpers/Error'
 import useForm from '../../Hooks/useForm'
 
 import { UserContext } from '../../contexts/UserContext';
+import useFetch from '../../Hooks/useFetch'
 
 const LoginCreate = () => {
 
@@ -18,26 +19,17 @@ const LoginCreate = () => {
     const email = useForm('email');
     const password = useForm();
 
-    const [error, setError] = React.useState(null)
-    const [loading, setLoading] = React.useState(false)
+    const { loading, error, request} = useFetch()
 
     async function handleSubmit(event) {
-        event.preventDefault();        
-        try {
-            setError(null)
-            setLoading(true)
-            api.defaults.headers.post['Content-Type'] = 'application/json'
-            const response = await api.post('api/user', JSON.stringify({
-                username: username.value,
-                email: email.value,
-                password: password.value,
-            }))
-            userLogin({username: username.value, password: password.value})
-        } catch (error) {
-            setError(error.response.data.message)
-        } finally {
-            setLoading(false)
-        }
+        event.preventDefault();    
+        const { url, options } = USER_POST({
+            username: username.value,
+            email: email.value,
+            password: password.value,
+        })
+        const { response } = await request(url, options);
+        if(response.ok) userLogin(username.value, password.value)
     }
 
     return (

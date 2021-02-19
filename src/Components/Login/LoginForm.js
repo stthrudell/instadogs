@@ -10,16 +10,10 @@ import { UserContext } from '../../contexts/UserContext'
 
 const LoginForm = () => {
 
-    const { userLogin, getUser } = React.useContext(UserContext)
+    const { userLogin, error, loading } = React.useContext(UserContext)
 
     const username = useForm()
     const password = useForm()
-
-    React.useEffect(() => {
-        const token = window.localStorage.getItem('token')
-        if(token)
-            getUser(token)
-    }, [])
 
     async function handleSubmit(event) {
         event.preventDefault()
@@ -36,7 +30,8 @@ const LoginForm = () => {
             <form onSubmit={handleSubmit}>
                 <Input label="Usuário" type="text" name="username" {...username} />
                 <Input label="Senha" type="password" name="password" {...password}/>
-                <Button>Entrar</Button>
+                <Button disabled={loading}>{loading ? 'Carregando...' : 'Entrar'}</Button>
+                {error && <p>{error}</p>}
             </form>
             <Link to="/login/criar">Cadastro</Link>
         </section>
